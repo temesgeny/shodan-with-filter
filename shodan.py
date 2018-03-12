@@ -5,7 +5,6 @@ from connect import *
 def search(sess, text):
     sess.mount('https://www.shodan.io', HTTP20Adapter())
     url = "https://www.shodan.io/search?" + urlencode({"query" : text})
-    print url
     headers = {}
     headers[":authority"] = "www.shodan.io"
     headers[":method"] = "GET"
@@ -22,20 +21,26 @@ def search(sess, text):
     headers["user-agent"] = user_agent
 
     response = sess.get(url, headers = headers)
-    print response.text
     hosts = text_parser.get_search_results(response.text)
-    response = sess.get("https://www.shodan.io/search?" + urlencode({"query" : text, "page" : 2}), headers = headers)
-    hosts.extend(text_parser.get_search_results(response.text))
+    response = sess.get("https://www.shodan.io/search?" + urlencode({"query" : text, "page" : 1}), headers = headers)
+    hosts_found = text_parser.get_search_results(response.text)
+    hosts.extend(hosts_found)
     print hosts
+
+def search_map(sess, text):
+    # sess.mount('https://www.shodan.io', HTTP20Adapter())
+    headers = {}
+    response = sess.get("https://maps.shodan.io/_search?" + urlencode({"q" : text}), headers = headers)
+    hosts_found = text_parser.parse_map(response.text)
+    print hosts_found
 
 
 if __name__ == '__main__':
     sess = connect()
-    print sess.get("https://maps.shodan.io/_search?q=country:ET+port:3389").text
     while True:
         text = raw_input(">> ")
         if text == "q" or text == "quit":
             print "Exiting..."
             sys.exit(1)
-        search(sess, text)
+        search_map(sess, text)
 
