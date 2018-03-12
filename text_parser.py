@@ -26,7 +26,7 @@ def parse_map(text):
         matches = data['matches']
         total = data['total']
         print "%d results found!" % total
-
+        print "%d results loaded!" % len(matches)
         for match in matches:
             host = search.Host(match['ip_str'])
             host.add_port(match['port'])
