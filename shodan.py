@@ -31,7 +31,6 @@ def search(sess, text):
 
 if __name__ == '__main__':
     sess = connect()
-    print sess.get("https://maps.shodan.io/_search?q=country:ET+port:3389").text
     while True:
         text = raw_input(">> ")
         if text == "q" or text == "quit":
